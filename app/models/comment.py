@@ -15,19 +15,22 @@ class Comment(db.Model):
     task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=True)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=True)
     report_id = db.Column(db.Integer, db.ForeignKey('report.id'), nullable=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
     
     # Relaciones inversas
-    user = db.relationship('User', backref=db.backref('comments', lazy='dynamic'))
-    task = db.relationship('Task', backref=db.backref('comments', lazy='dynamic'))
-    project = db.relationship('Project', backref=db.backref('comments', lazy='dynamic'))
-    report = db.relationship('Report', backref=db.backref('comments', lazy='dynamic'))
+    user = db.relationship('User', backref=db.backref('user_comments', lazy='dynamic'))
+    task = db.relationship('Task', backref=db.backref('task_comments', lazy='dynamic'))
+    project = db.relationship('Project', backref=db.backref('project_comments', lazy='dynamic'))
+    report = db.relationship('Report', backref=db.backref('report_comments', lazy='dynamic'))
+    post = db.relationship('Post', backref=db.backref('post_comments', lazy='dynamic'))
 
-    def __init__(self, content, user_id, task_id=None, project_id=None, report_id=None):
+    def __init__(self, content, user_id, task_id=None, project_id=None, report_id=None, post_id=None):
         self.content = content
         self.user_id = user_id
         self.task_id = task_id
         self.project_id = project_id
         self.report_id = report_id
+        self.post_id = post_id
 
     def to_dict(self):
         return {
@@ -38,7 +41,8 @@ class Comment(db.Model):
             'user_id': self.user_id,
             'task_id': self.task_id,
             'project_id': self.project_id,
-            'report_id': self.report_id
+            'report_id': self.report_id,
+            'post_id': self.post_id
         }
 
     def __repr__(self):
