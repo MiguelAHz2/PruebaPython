@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">{{ project.title }}</h4>
+                    <div>
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>Volver
+                        </a>
+                        {% if project.user_id == current_user.id %}
+                        <a href="{{ url_for('main.edit_project', project_id=project.id) }}" class="btn btn-primary btn-sm ms-2">
+                            <i class="fas fa-edit me-1"></i>Editar
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-2">Descripción</h6>
+                        <p class="mb-0">{{ project.description or 'Sin descripción' }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-2">Estado</h6>
+                        <span class="badge bg-{{ 'success' if project.status == 'active' else 'secondary' }}">
+                            {{ {'active': 'Activo', 'completed': 'Completado', 'archived': 'Archivado'}[project.status] }}
+                        </span>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-2">Fechas</h6>
+                        <p class="mb-1"><small>Creado: {{ project.created_at.strftime('%d/%m/%Y %H:%M') }}</small></p>
+                        <p class="mb-0"><small>Última actualización: {{ project.updated_at.strftime('%d/%m/%Y %H:%M') }}</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reportes asociados -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Reportes</h5>
+                    <a href="{{ url_for('main.new_report') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Nuevo Reporte
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if project.reports %}
+                        <div class="list-group">
+                            {% for report in project.reports %}
+                            <a href="{{ url_for('main.report_detail', report_id=report.id) }}" 
+                               class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ report.title }}</h6>
+                                    <small class="text-muted">{{ report.created_at.strftime('%d/%m/%Y') }}</small>
+                                </div>
+                                <p class="mb-1">{{ report.content[:100] }}...</p>
+                                <small class="text-muted">
+                                    <span class="badge bg-info">{{ report.type }}</span>
+                                </small>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center mb-0">No hay reportes asociados a este proyecto</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Información del Creador -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Creador</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ project.author.get_avatar(48) }}" 
+                             class="rounded-circle me-3" 
+                             width="48" height="48" 
+                             alt="Avatar">
+                        <div>
+                            <h6 class="mb-0">{{ project.author.username }}</h6>
+                            <small class="text-muted">{{ project.author.email }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Estadísticas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>Reportes Totales</div>
+                        <span class="badge bg-primary">{{ project.reports|length }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>Días Activo</div>
+                        <span class="badge bg-info">
+                            {{ ((project.updated_at - project.created_at).days + 1) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.badge {
+    font-size: 0.9em;
+    padding: 0.5em 0.7em;
+}
+</style>
+{% endblock %} 

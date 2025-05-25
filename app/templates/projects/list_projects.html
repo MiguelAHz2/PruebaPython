@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Header Section -->
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-8">
+            <h1 class="display-6 fw-bold mb-0">
+                <i class="fas fa-project-diagram text-primary me-3"></i>Mis Proyectos
+            </h1>
+            <p class="text-muted mt-2 mb-0">Gestiona y organiza todos tus proyectos en un solo lugar</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('projects.create_project') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>Nuevo Proyecto
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card animate-fade-in">
+                <div class="card-body p-4">
+                    <form method="GET" class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-filter me-2"></i>Filtrar por Estado
+                            </label>
+                            <select name="status" class="form-select form-select-lg" onchange="this.form.submit()">
+                                <option value="all" {% if current_status == 'all' %}selected{% endif %}>
+                                    Todos los estados
+                                </option>
+                                {% for key, value in states.items() %}
+                                    <option value="{{ key }}" {% if current_status == key %}selected{% endif %}>
+                                        {{ value }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-sort me-2"></i>Ordenar por
+                            </label>
+                            <select name="sort" class="form-select form-select-lg" onchange="this.form.submit()">
+                                <option value="updated_desc" selected>Más recientes primero</option>
+                                <option value="updated_asc">Más antiguos primero</option>
+                                <option value="title_asc">Título (A-Z)</option>
+                                <option value="title_desc">Título (Z-A)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex justify-content-end align-items-center gap-2">
+                                <span class="text-muted">Vista:</span>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-outline-primary active" data-view="grid">
+                                        <i class="fas fa-th-large"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" data-view="list">
+                                        <i class="fas fa-list"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="row" id="projectsGrid">
+        {% if projects %}
+            {% for project in projects %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card project-card h-100 animate-fade-in" style="--delay: {{ loop.index0 * 0.1 }}s">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title mb-0">
+                                    <a href="{{ url_for('projects.view_project', project_id=project.id) }}" 
+                                       class="text-decoration-none text-dark stretched-link">
+                                        {{ project.title }}
+                                    </a>
+                                </h5>
+                                <span class="badge rounded-pill bg-{{ project.status_color }}">
+                                    {{ project.status_label }}
+                                </span>
+                            </div>
+                            <p class="card-text text-muted mb-4">{{ project.description|truncate(100) }}</p>
+                            <div class="project-stats d-flex align-items-center gap-4">
+                                <div class="stat">
+                                    <i class="fas fa-file-alt text-primary me-2"></i>
+                                    <span>{{ project.reports.count() }} reportes</span>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-clock text-warning me-2"></i>
+                                    <span>{{ project.updated_at.strftime('%d/%m/%Y') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="progress flex-grow-1 me-3" style="height: 6px;">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: {{ project.get_completed_tasks() }}%" 
+                                         aria-valuenow="{{ project.get_completed_tasks() }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ project.get_completed_tasks() }}% completado</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="empty-state text-center py-5 animate-fade-in">
+                    <div class="empty-state-icon mb-4">
+                        <i class="fas fa-folder-open fa-4x text-muted"></i>
+                    </div>
+                    <h3 class="mb-3">No hay proyectos aún</h3>
+                    <p class="text-muted mb-4">Comienza creando tu primer proyecto y organiza tu trabajo de manera eficiente.</p>
+                    <a href="{{ url_for('projects.create_project') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus me-2"></i>Crear Primer Proyecto
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Projects List (hidden by default) -->
+    <div class="row d-none" id="projectsList">
+        <div class="col-12">
+            {% if projects %}
+                <div class="list-group animate-fade-in">
+                    {% for project in projects %}
+                        <div class="list-group-item list-group-item-action p-4">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h5 class="mb-0">
+                                            <a href="{{ url_for('projects.view_project', project_id=project.id) }}" 
+                                               class="text-decoration-none text-dark">
+                                                {{ project.title }}
+                                            </a>
+                                        </h5>
+                                        <span class="badge rounded-pill bg-{{ project.status_color }} ms-3">
+                                            {{ project.status_label }}
+                                        </span>
+                                    </div>
+                                    <p class="mb-3 text-muted">{{ project.description|truncate(150) }}</p>
+                                    <div class="d-flex align-items-center gap-4">
+                                        <div class="project-stat">
+                                            <i class="fas fa-file-alt text-primary me-2"></i>
+                                            <span>{{ project.reports.count() }} reportes</span>
+                                        </div>
+                                        <div class="project-stat">
+                                            <i class="fas fa-clock text-warning me-2"></i>
+                                            <span>Actualizado: {{ project.updated_at.strftime('%d/%m/%Y %H:%M') }}</span>
+                                        </div>
+                                        <div class="project-stat">
+                                            <i class="fas fa-tasks text-success me-2"></i>
+                                            <span>{{ project.get_completed_tasks() }}% completado</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript para cambiar entre vistas -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const viewButtons = document.querySelectorAll('[data-view]');
+    const projectsGrid = document.getElementById('projectsGrid');
+    const projectsList = document.getElementById('projectsList');
+    
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const view = this.dataset.view;
+            
+            // Actualizar botones activos
+            viewButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Cambiar vista
+            if (view === 'grid') {
+                projectsGrid.classList.remove('d-none');
+                projectsList.classList.add('d-none');
+            } else {
+                projectsGrid.classList.add('d-none');
+                projectsList.classList.remove('d-none');
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

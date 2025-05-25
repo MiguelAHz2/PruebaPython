@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Welcome Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card welcome-card animate-fade-in gradient-border">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <div class="avatar-circle position-relative rotate-3d">
+                                <img src="{{ current_user.get_avatar(96) }}" 
+                                     class="rounded-circle shadow-sm" 
+                                     width="96" height="96" 
+                                     alt="Avatar">
+                                <div class="status-indicator bg-success pulse"></div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h1 class="display-6 mb-2 fw-bold fade-up" style="--delay: 0.2s">¡Bienvenido, {{ current_user.username }}!</h1>
+                            <p class="text-muted mb-0 d-flex align-items-center fade-up" style="--delay: 0.3s">
+                                <i class="fas fa-clock me-2"></i>
+                                <span>Último acceso: {{ current_user.last_seen.strftime('%d/%m/%Y %H:%M') }}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="row mb-5">
+        <div class="col-md-3 mb-4 mb-md-0">
+            <div class="stat-card neumorphic animate-fade-in" style="--delay: 0.1s">
+                <div class="stat-icon bg-primary-light shine-effect">
+                    <i class="fas fa-project-diagram text-primary"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ projects|selectattr('status', 'equalto', 'active')|list|length }}</h3>
+                    <p class="text-muted mb-2">Proyectos Activos</p>
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar bg-primary" style="width: {{ (projects|selectattr('status', 'equalto', 'active')|list|length / projects|length * 100)|round|int if projects|length > 0 else 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4 mb-md-0">
+            <div class="stat-card neumorphic animate-fade-in" style="--delay: 0.2s">
+                <div class="stat-icon bg-warning-light shine-effect">
+                    <i class="fas fa-clock text-warning"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ reports|selectattr('status', 'equalto', 'pending')|list|length }}</h3>
+                    <p class="text-muted mb-2">Reportes Pendientes</p>
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar bg-warning" style="width: {{ (reports|selectattr('status', 'equalto', 'pending')|list|length / reports|length * 100)|round|int if reports|length > 0 else 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4 mb-md-0">
+            <div class="stat-card neumorphic animate-fade-in" style="--delay: 0.3s">
+                <div class="stat-icon bg-success-light shine-effect">
+                    <i class="fas fa-check-circle text-success"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ reports|selectattr('status', 'equalto', 'completed')|list|length }}</h3>
+                    <p class="text-muted mb-2">Reportes Completados</p>
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar bg-success" style="width: {{ (reports|selectattr('status', 'equalto', 'completed')|list|length / reports|length * 100)|round|int if reports|length > 0 else 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card neumorphic animate-fade-in" style="--delay: 0.4s">
+                <div class="stat-icon bg-info-light shine-effect">
+                    <i class="fas fa-chart-line text-info"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ activities|length }}</h3>
+                    <p class="text-muted mb-2">Total Actividades</p>
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar bg-info" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Recent Activities -->
+        <div class="col-lg-8 mb-4">
+            <div class="card animate-fade-in depth-effect" style="--delay: 0.5s">
+                <div class="card-header bg-transparent border-bottom-0 d-flex justify-content-between align-items-center p-4">
+                    <h5 class="mb-0 fw-bold">Actividad Reciente</h5>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-primary active btn-ripple" data-filter="all">
+                            Todos
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary btn-ripple" data-filter="project">
+                            Proyectos
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary btn-ripple" data-filter="report">
+                            Reportes
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="activity-list">
+                        {% for activity in activities %}
+                        <div class="activity-item p-4 border-bottom hover-lift" data-type="{{ activity.type }}">
+                            <div class="d-flex">
+                                <div class="activity-icon me-3">
+                                    <div class="icon-circle bg-{{ activity.type_color }}-light shine-effect">
+                                        <i class="fas fa-{{ activity.icon }} text-{{ activity.type_color }}"></i>
+                                    </div>
+                                </div>
+                                <div class="activity-content flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0">
+                                            <a href="{{ activity.url }}" class="text-decoration-none text-dark hover-underline">
+                                                {{ activity.title }}
+                                            </a>
+                                        </h6>
+                                        <span class="badge rounded-pill bg-{{ activity.status_color }} pulse">
+                                            {{ activity.status_label }}
+                                        </span>
+                                    </div>
+                                    <p class="text-muted small mb-0">
+                                        <i class="far fa-clock me-1"></i>
+                                        {{ activity.created_at.strftime('%d/%m/%Y %H:%M') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox fa-3x text-muted mb-3 fade-up"></i>
+                                <p class="text-muted mb-0 fade-up" style="--delay: 0.2s">No hay actividades recientes</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Recent Projects -->
+        <div class="col-lg-4">
+            <!-- Quick Actions -->
+            <div class="card mb-4 animate-fade-in neumorphic" style="--delay: 0.6s">
+                <div class="card-header bg-transparent border-bottom-0 p-4">
+                    <h5 class="mb-0 fw-bold">Acciones Rápidas</h5>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <div class="d-grid gap-3">
+                        <a href="{{ url_for('projects.create_project') }}" class="btn btn-primary btn-lg btn-action shine-effect">
+                            <i class="fas fa-plus me-2"></i>Nuevo Proyecto
+                        </a>
+                        <a href="{{ url_for('reports.create_report') }}" class="btn btn-outline-primary btn-lg btn-action shine-effect">
+                            <i class="fas fa-file-alt me-2"></i>Crear Reporte
+                        </a>
+                        <a href="{{ url_for('auth.settings') }}" class="btn btn-outline-secondary btn-lg btn-action shine-effect">
+                            <i class="fas fa-cog me-2"></i>Configuración
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Projects -->
+            <div class="card animate-fade-in neumorphic" style="--delay: 0.7s">
+                <div class="card-header bg-transparent border-bottom-0 p-4">
+                    <h5 class="mb-0 fw-bold">Proyectos Recientes</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% for project in projects[:3] %}
+                    <div class="p-4 border-bottom hover-lift">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-2">
+                                    <a href="{{ url_for('projects.view_project', project_id=project.id) }}" 
+                                       class="text-decoration-none text-dark hover-underline">
+                                        {{ project.title }}
+                                    </a>
+                                </h6>
+                                <p class="text-muted small mb-0">
+                                    <i class="far fa-calendar-alt me-1"></i>
+                                    Creado: {{ project.created_at.strftime('%d/%m/%Y') }}
+                                </p>
+                            </div>
+                            <span class="badge rounded-pill bg-{{ project.status_color }} pulse">
+                                {{ project.status_label }}
+                            </span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <div class="empty-state">
+                            <i class="fas fa-folder-open fa-3x text-muted mb-3 fade-up"></i>
+                            <p class="text-muted mb-0 fade-up" style="--delay: 0.2s">No hay proyectos recientes</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript para filtrar actividades -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const activityItems = document.querySelectorAll('.activity-item');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.dataset.filter;
+            
+            // Actualizar botones activos
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filtrar actividades
+            activityItems.forEach(item => {
+                if (filter === 'all' || item.dataset.type === filter) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+
+{% endblock %} 

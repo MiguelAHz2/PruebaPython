@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}Gestión de Proyectos{% endblock %}</title>
+    
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="animate-fade-in">
+    <!-- Fondo tecnológico animado -->
+    <div class="tech-background">
+        <!-- Gradiente base animado -->
+        <div class="gradient-overlay"></div>
+        
+        <!-- Líneas de movimiento -->
+        <div class="moving-lines">
+            <div class="moving-line" style="--rotation: 45deg;"></div>
+            <div class="moving-line" style="--rotation: -30deg;"></div>
+            <div class="moving-line" style="--rotation: 15deg;"></div>
+            <div class="moving-line" style="--rotation: -45deg;"></div>
+        </div>
+        
+        <!-- Puntos de energía -->
+        <div class="energy-points">
+            <div class="energy-point"></div>
+            <div class="energy-point"></div>
+            <div class="energy-point"></div>
+            <div class="energy-point"></div>
+            <div class="energy-point"></div>
+        </div>
+        
+        <!-- Circuitos -->
+        <div class="circuits">
+            <div class="circuit" style="top: 25%; left: 10%; width: 200px; transform: rotate(30deg);"></div>
+            <div class="circuit" style="top: 45%; right: 15%; width: 150px; transform: rotate(-45deg);"></div>
+            <div class="circuit" style="top: 75%; left: 30%; width: 180px; transform: rotate(15deg);"></div>
+        </div>
+        
+        <!-- Partículas flotantes -->
+        <div class="floating-particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        
+        <!-- Líneas tecnológicas -->
+        <div class="tech-lines">
+            <div class="tech-line"></div>
+            <div class="tech-line"></div>
+            <div class="tech-line"></div>
+            <div class="tech-line"></div>
+        </div>
+        
+        <!-- Efectos de luz -->
+        <div class="light-effects">
+            <div class="light-effect light-effect-1"></div>
+            <div class="light-effect light-effect-2"></div>
+        </div>
+    </div>
+
+    <!-- Script para inicializar el tema antes de que se cargue el contenido -->
+    <script>
+        (function() {
+            {% if current_user.is_authenticated %}
+                const theme = '{{ current_user.theme }}';
+            {% else %}
+                const theme = localStorage.getItem('theme') || 'light';
+            {% endif %}
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top glass-effect">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center shine-effect" href="{{ url_for('main.index') }}">
+                <div class="brand-icon me-2">
+                    <i class="fas fa-project-diagram text-primary"></i>
+                </div>
+                <span class="fw-bold">ProjectManager</span>
+            </a>
+            
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                {% if current_user.is_authenticated %}
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center hover-underline" href="{{ url_for('main.dashboard') }}">
+                            <i class="fas fa-home me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center hover-underline" href="{{ url_for('projects.list_projects') }}">
+                            <i class="fas fa-folder me-2"></i>Proyectos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center hover-underline" href="{{ url_for('reports.list_reports') }}">
+                            <i class="fas fa-file-alt me-2"></i>Reportes
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Búsqueda en tiempo real -->
+                <div class="search-container me-3 position-relative">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control custom-input" 
+                               placeholder="Buscar proyectos y reportes..." 
+                               aria-label="Buscar">
+                        <button class="btn btn-primary search-button" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div id="searchResults" class="search-results">
+                        <!-- Los resultados se mostrarán aquí -->
+                    </div>
+                </div>
+
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item me-3">
+                        <button class="theme-toggle btn btn-link p-0 border-0" id="themeToggle" title="Cambiar tema">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="avatar me-2 rounded-circle">
+                                <img src="{{ current_user.get_avatar(32) }}" alt="{{ current_user.username }}" 
+                                     class="rounded-circle" width="32" height="32">
+                            </div>
+                            <span class="d-none d-md-inline">{{ current_user.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-lg">
+                            <li>
+                                <a class="dropdown-item py-2 px-3" href="{{ url_for('auth.profile') }}">
+                                    <i class="fas fa-user me-2 text-primary"></i>Perfil
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2 px-3" href="{{ url_for('auth.settings') }}">
+                                    <i class="fas fa-cog me-2 text-primary"></i>Configuración
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item py-2 px-3 text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                </a>
+                                <form id="logout-form" action="{{ url_for('auth.logout') }}" method="POST" style="display: none;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-3">
+                        <button class="theme-toggle btn btn-link p-0 border-0" id="themeToggle" title="Cambiar tema">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-primary me-2" href="{{ url_for('auth.login') }}">
+                            <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary" href="{{ url_for('auth.register') }}">
+                            <i class="fas fa-user-plus me-2"></i>Registrarse
+                        </a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mensajes Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-4">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm rounded-lg fade-up" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            {{ message }}
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Contenido Principal -->
+    <main class="py-5">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-4 glass-effect">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-3 hover-lift">
+                        <i class="fas fa-project-diagram text-primary me-2"></i>
+                        <h5 class="mb-0 fw-bold">ProjectManager</h5>
+                    </div>
+                    <p class="text-muted mb-0">Sistema de gestión de proyectos y reportes</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="social-links mb-3">
+                        <a href="#" class="btn btn-outline-secondary btn-sm me-2 btn-ripple">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm me-2 btn-ripple">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm btn-ripple">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                    <p class="text-muted mb-0">&copy; 2024 ProjectManager. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="{{ url_for('static', filename='js/form_handler.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/status_manager.js') }}"></script>
+    
+    <!-- Script para manejar el tema -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar todos los dropdowns de Bootstrap
+        var dropdowns = document.querySelectorAll('.dropdown-toggle');
+        dropdowns.forEach(function(dropdown) {
+            new bootstrap.Dropdown(dropdown);
+        });
+
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const icon = themeToggle.querySelector('i');
+        
+        // Cargar tema guardado
+        {% if current_user.is_authenticated %}
+            const savedTheme = '{{ current_user.theme }}';
+        {% else %}
+            const savedTheme = localStorage.getItem('theme') || 'light';
+        {% endif %}
+        
+        html.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            
+            {% if current_user.is_authenticated %}
+                // Actualizar tema en la base de datos
+                fetch('{{ url_for("auth.update_theme") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    },
+                    body: 'theme=' + newTheme
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        console.error('Error al actualizar el tema:', data.message);
+                        // Revertir el cambio si hay error
+                        html.setAttribute('data-theme', currentTheme);
+                        updateThemeIcon(currentTheme);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al actualizar el tema:', error);
+                    // Revertir el cambio si hay error
+                    html.setAttribute('data-theme', currentTheme);
+                    updateThemeIcon(currentTheme);
+                });
+            {% else %}
+                localStorage.setItem('theme', newTheme);
+            {% endif %}
+            
+            updateThemeIcon(newTheme);
+        });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+
+        // Efecto de navbar en scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    });
+    </script>
+    
+    <!-- Script para la búsqueda en tiempo real -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                searchResults.classList.add('d-none');
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                fetch(`/search?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            searchResults.innerHTML = data.map(item => `
+                                <a href="${item.url}" class="search-result-item">
+                                    <div class="result-type">${item.type}</div>
+                                    <div class="result-title">${item.title}</div>
+                                </a>
+                            `).join('');
+                            searchResults.classList.remove('d-none');
+                        } else {
+                            searchResults.innerHTML = '<div class="no-results">No se encontraron resultados</div>';
+                            searchResults.classList.remove('d-none');
+                        }
+                    });
+            }, 300);
+        });
+
+        // Cerrar resultados al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.add('d-none');
+            }
+        });
+    });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+
+    <style>
+    /* Estilos del buscador */
+    .search-container {
+        width: 300px;
+    }
+
+    .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        margin-top: 0.5rem;
+        max-height: 400px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+
+    .search-result-item {
+        display: block;
+        padding: 0.75rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-color);
+        transition: all 0.2s ease;
+    }
+
+    .search-result-item:last-child {
+        border-bottom: none;
+    }
+
+    .search-result-item:hover,
+    .search-result-item.focused {
+        background: var(--bg-secondary);
+        color: var(--primary-color);
+    }
+
+    .search-result-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(var(--primary-rgb), 0.1);
+        border-radius: var(--border-radius);
+    }
+
+    .result-type {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .result-title {
+        font-weight: 500;
+        margin-top: 0.25rem;
+    }
+
+    .no-results,
+    .search-error {
+        padding: 2rem;
+        text-align: center;
+        color: var(--text-muted);
+    }
+
+    .no-results i,
+    .search-error i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    /* Modo oscuro */
+    [data-theme="dark"] .search-results {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .search-result-item {
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .search-result-item:hover,
+    [data-theme="dark"] .search-result-item.focused {
+        background: rgba(var(--primary-rgb), 0.1);
+    }
+
+    /* Scrollbar personalizada */
+    .search-results::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .search-results::-webkit-scrollbar-track {
+        background: var(--bg-primary);
+    }
+
+    .search-results::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: var(--border-radius-full);
+    }
+
+    .search-results::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+    }
+
+    @media (max-width: 768px) {
+        .search-container {
+            width: 100%;
+            margin: 1rem 0;
+        }
+    }
+    </style>
+</body>
+</html> 

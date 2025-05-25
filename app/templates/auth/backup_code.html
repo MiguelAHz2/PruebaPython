@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Usar Código de Respaldo{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card neumorphic animate-fade-in">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="brand-icon mb-3 shine-effect">
+                            <i class="fas fa-key fa-3x text-primary"></i>
+                        </div>
+                        <h2 class="fw-bold mb-1 fade-up gradient-text" data-text="Código de Respaldo">Código de Respaldo</h2>
+                        <p class="text-muted fade-up" style="--delay: 0.1s">Ingresa uno de tus códigos de respaldo</p>
+                    </div>
+
+                    <form method="POST" class="fade-up" style="--delay: 0.2s">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-floating mb-4">
+                            {{ form.code(class="form-control form-control-lg custom-input text-center", 
+                                       placeholder="XXXXXXXX", maxlength="8", pattern="[A-Z0-9]{8}",
+                                       autocomplete="off") }}
+                            <label>Código de Respaldo</label>
+                            {% if form.code.errors %}
+                                {% for error in form.code.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid mb-4">
+                            {{ form.submit(class="btn btn-primary btn-lg btn-action shine-effect") }}
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4 fade-up" style="--delay: 0.3s">
+                        <p class="text-muted">
+                            ¿Recuperaste acceso a tu aplicación? 
+                            <a href="{{ url_for('auth.verify_2fa') }}" class="text-primary hover-underline">
+                                Usar código de la aplicación
+                            </a>
+                        </p>
+                    </div>
+
+                    <div class="alert alert-info mt-4 fade-up" style="--delay: 0.4s">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Los códigos de respaldo son de un solo uso. Una vez utilizado, ese código no funcionará nuevamente.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control.text-center {
+    letter-spacing: 0.35em;
+    font-family: monospace;
+    font-size: 1.5em;
+    text-transform: uppercase;
+}
+
+[data-theme="dark"] .form-control.text-center {
+    color: var(--text-primary);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const codeInput = document.querySelector('input[name="code"]');
+    
+    // Foco automático
+    codeInput.focus();
+    
+    // Solo permitir números y letras mayúsculas
+    codeInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^A-Z0-9]/g, '').toUpperCase();
+        if (this.value.length > 8) {
+            this.value = this.value.slice(0, 8);
+        }
+    });
+    
+    // Enviar automáticamente cuando se completan los 8 caracteres
+    codeInput.addEventListener('keyup', function(e) {
+        if (this.value.length === 8 && e.key !== 'Backspace') {
+            this.form.submit();
+        }
+    });
+});
+</script>
+{% endblock %} 

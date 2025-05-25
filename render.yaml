@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: gestion-proyectos
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.7
+      - key: FLASK_APP
+        value: wsgi.py
+      - key: FLASK_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gestion_proyectos_db
+          property: connectionString
+
+databases:
+  - name: gestion_proyectos_db
+    databaseName: gestion_proyectos
+    user: gestion_proyectos_user
+    plan: free 

@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="auth-card glass-morphism animate__animated animate__fadeIn">
+                <div class="auth-header text-center">
+                    <div class="auth-logo">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h1 class="auth-title gradient-text">Iniciar Sesión</h1>
+                    <p class="auth-subtitle">Bienvenido de nuevo</p>
+                </div>
+                
+                <form method="POST" action="" class="auth-form">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="form-floating mb-3">
+                        {{ form.username(class="form-control custom-input", placeholder="Nombre de usuario") }}
+                        {{ form.username.label }}
+                        {% if form.username.errors %}
+                            {% for error in form.username.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        {{ form.password(class="form-control custom-input", placeholder="Contraseña") }}
+                        {{ form.password.label }}
+                        {% if form.password.errors %}
+                            {% for error in form.password.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-check mb-4">
+                        {{ form.remember_me(class="form-check-input custom-checkbox") }}
+                        {{ form.remember_me.label(class="form-check-label") }}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary btn-lg custom-button") }}
+                    </div>
+
+                    <div class="auth-links text-center mt-4">
+                        <a href="{{ url_for('auth.register') }}" class="link-primary">
+                            Crear cuenta nueva
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.auth-card {
+    padding: 2.5rem;
+    border-radius: var(--border-radius-xl);
+    background: rgba(var(--bg-primary-rgb), 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(var(--primary-rgb), 0.1);
+    box-shadow: 
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.auth-header {
+    margin-bottom: 2rem;
+}
+
+.auth-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+}
+
+.auth-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.custom-input {
+    border: 1px solid rgba(var(--primary-rgb), 0.2);
+    border-radius: var(--border-radius);
+    padding: 1rem 0.75rem;
+    font-size: 1rem;
+    background: rgba(var(--bg-primary-rgb), 0.5);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.custom-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
+}
+
+.form-floating > label {
+    padding: 1rem 0.75rem;
+}
+
+.form-floating > .custom-input:focus ~ label,
+.form-floating > .custom-input:not(:placeholder-shown) ~ label {
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+    color: var(--primary-color);
+}
+
+.custom-checkbox {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid rgba(var(--primary-rgb), 0.2);
+    border-radius: 0.35rem;
+}
+
+.custom-checkbox:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.custom-button {
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.custom-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+}
+
+.auth-links {
+    font-size: 0.95rem;
+}
+
+.auth-links a {
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.auth-links a:hover {
+    color: var(--primary-dark);
+}
+
+/* Ajustes para modo oscuro */
+[data-theme="dark"] .auth-card {
+    background: rgba(30, 41, 59, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .custom-input {
+    background: rgba(30, 41, 59, 0.5);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .custom-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.2);
+}
+
+[data-theme="dark"] .form-floating > label {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .custom-checkbox {
+    background-color: transparent;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+</style>
+{% endblock %} 

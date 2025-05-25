@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Información Principal -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <img src="{{ current_user.get_avatar(128) }}" 
+                         class="rounded-circle mb-3" 
+                         width="128" height="128" 
+                         alt="Avatar">
+                    <h4 class="card-title">{{ current_user.username }}</h4>
+                    <p class="text-muted">{{ current_user.email }}</p>
+                    <p class="text-muted">
+                        <small>Miembro desde: {{ current_user.created_at.strftime('%d/%m/%Y') }}</small>
+                    </p>
+                    <a href="{{ url_for('auth.settings') }}" class="btn btn-primary">
+                        <i class="fas fa-cog me-1"></i>Configuración
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Estadísticas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <h2 class="text-primary">{{ current_user.projects.count() }}</h2>
+                            <p class="text-muted mb-0">Proyectos</p>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <h2 class="text-success">{{ current_user.reports.count() }}</h2>
+                            <p class="text-muted mb-0">Reportes</p>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <h2 class="text-info">{{ current_user.get_completed_tasks() }}</h2>
+                            <p class="text-muted mb-0">Tareas Completadas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actividad Reciente -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Actividad Reciente</h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        {% set activities = current_user.get_recent_activities() %}
+                        {% if activities %}
+                            {% for activity in activities %}
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-{{ activity.type_color }}">
+                                        <i class="fas fa-{{ activity.icon }}"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">{{ activity.title }}</h6>
+                                        <p class="mb-0 text-muted">
+                                            <small>{{ activity.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted text-center mb-0">No hay actividad reciente</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding: 1rem 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background-color: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 3rem;
+    padding-bottom: 1.5rem;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 2rem;
+    color: white;
+}
+
+.timeline-marker i {
+    font-size: 0.875rem;
+}
+
+.timeline-content {
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+</style>
+{% endblock %} 

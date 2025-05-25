@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Configuración{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Menú de navegación -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#profile-settings">
+                            <i class="fas fa-user-circle me-2"></i>Perfil
+                        </button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#security-settings">
+                            <i class="fas fa-shield-alt me-2"></i>Seguridad
+                        </button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#notification-settings">
+                            <i class="fas fa-bell me-2"></i>Notificaciones
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="tab-content">
+                <!-- Configuración del Perfil -->
+                <div class="tab-pane fade show active" id="profile-settings">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Perfil</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('auth.settings') }}" enctype="multipart/form-data">
+                                {{ profile_form.hidden_tag() }}
+                                <div class="mb-3">
+                                    <div class="text-center mb-4">
+                                        <img src="{{ current_user.get_avatar(128) }}" 
+                                             class="rounded-circle" 
+                                             width="128" height="128" 
+                                             alt="Avatar">
+                                    </div>
+                                    {{ profile_form.avatar.label(class="form-label") }}
+                                    {{ profile_form.avatar(class="form-control") }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ profile_form.username.label(class="form-label") }}
+                                    {{ profile_form.username(class="form-control") }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ profile_form.email.label(class="form-label") }}
+                                    {{ profile_form.email(class="form-control") }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ profile_form.bio.label(class="form-label") }}
+                                    {{ profile_form.bio(class="form-control", rows="4") }}
+                                </div>
+                                <button type="submit" name="profile_submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>Guardar Cambios
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de Seguridad -->
+                <div class="tab-pane fade" id="security-settings">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Seguridad</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('auth.settings') }}">
+                                {{ security_form.hidden_tag() }}
+                                <div class="mb-3">
+                                    {{ security_form.current_password.label(class="form-label") }}
+                                    {{ security_form.current_password(class="form-control") }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ security_form.new_password.label(class="form-label") }}
+                                    {{ security_form.new_password(class="form-control") }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ security_form.confirm_password.label(class="form-label") }}
+                                    {{ security_form.confirm_password(class="form-control") }}
+                                </div>
+                                <button type="submit" name="security_submit" class="btn btn-primary">
+                                    <i class="fas fa-key me-1"></i>Cambiar Contraseña
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de Notificaciones -->
+                <div class="tab-pane fade" id="notification-settings">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Notificaciones</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('auth.settings') }}">
+                                {{ notification_form.hidden_tag() }}
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        {{ notification_form.email_notifications(class="form-check-input") }}
+                                        {{ notification_form.email_notifications.label(class="form-check-label") }}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        {{ notification_form.project_updates(class="form-check-input") }}
+                                        {{ notification_form.project_updates.label(class="form-check-label") }}
+                                    </div>
+                                </div>
+                                <button type="submit" name="notification_submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>Guardar Preferencias
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.nav-pills .nav-link {
+    color: #6c757d;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.nav-pills .nav-link:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.nav-pills .nav-link.active {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.card {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+</style>
+{% endblock %} 

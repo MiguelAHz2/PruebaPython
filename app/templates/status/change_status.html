@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Cambiar Estado de {{ type|title }}</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title mb-3">{{ item.title }}</h5>
+                    
+                    <div class="mb-4">
+                        <p><strong>Estado actual:</strong> 
+                            <span class="badge bg-{{ item.status_color }}">
+                                {{ item.status_label }}
+                            </span>
+                        </p>
+                    </div>
+
+                    <form method="POST">
+                        {{ form.csrf_token }}
+                        
+                        <div class="mb-3">
+                            {{ form.status.label(class="form-label") }}
+                            {{ form.status(class="form-select") }}
+                            {% if form.status.errors %}
+                                {% for error in form.status.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.comment.label(class="form-label") }}
+                            {{ form.comment(class="form-control", rows="3") }}
+                            {% if form.comment.errors %}
+                                {% for error in form.comment.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <div class="form-text">
+                                Puedes agregar un comentario opcional explicando el cambio de estado.
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">
+                                Guardar Cambios
+                            </button>
+                            {% if type == 'proyecto' %}
+                                <a href="{{ url_for('projects.view_project', project_id=item.id) }}" class="btn btn-secondary">
+                                    Cancelar
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('reports.view_report', report_id=item.id) }}" class="btn btn-secondary">
+                                    Cancelar
+                                </a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

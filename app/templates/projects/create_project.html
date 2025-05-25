@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Proyecto{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-card glass-morphism animate__animated animate__fadeIn">
+                <div class="form-header">
+                    <h1 class="form-title gradient-text">
+                        <i class="fas fa-folder-plus me-2"></i>Nuevo Proyecto
+                    </h1>
+                    <p class="form-subtitle">Crea un nuevo proyecto desde cero</p>
+                </div>
+
+                <form method="POST" action="" class="custom-form" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-info-circle me-2"></i>Información Básica
+                        </h2>
+                        
+                        <div class="form-floating mb-3">
+                            {{ form.title(class="form-control custom-input", placeholder="Título del proyecto") }}
+                            {{ form.title.label }}
+                            {% if form.title.errors %}
+                                {% for error in form.title.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form.description(class="form-control custom-input custom-textarea", placeholder="Descripción", style="height: 120px") }}
+                            {{ form.description.label }}
+                            {% if form.description.errors %}
+                                {% for error in form.description.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-cog me-2"></i>Configuración
+                        </h2>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.start_date(class="form-control custom-input", placeholder="Fecha de inicio") }}
+                                    {{ form.start_date.label }}
+                                    {% if form.start_date.errors %}
+                                        {% for error in form.start_date.errors %}
+                                            <div class="invalid-feedback d-block">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.end_date(class="form-control custom-input", placeholder="Fecha de finalización") }}
+                                    {{ form.end_date.label }}
+                                    {% if form.end_date.errors %}
+                                        {% for error in form.end_date.errors %}
+                                            <div class="invalid-feedback d-block">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mt-3">
+                            {{ form.status(class="form-select custom-input", placeholder="Estado") }}
+                            {{ form.status.label }}
+                            {% if form.status.errors %}
+                                {% for error in form.status.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-users me-2"></i>Equipo y Recursos
+                        </h2>
+                        
+                        <div class="form-floating mb-3">
+                            {{ form.team_members(class="form-select custom-input", placeholder="Miembros del equipo", multiple=True) }}
+                            {{ form.team_members.label }}
+                            {% if form.team_members.errors %}
+                                {% for error in form.team_members.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="custom-file-upload mb-3">
+                            <label for="{{ form.attachments.id }}" class="file-upload-label">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>
+                                <span>Adjuntar archivos</span>
+                            </label>
+                            {{ form.attachments(class="form-control", style="display: none;") }}
+                            {% if form.attachments.errors %}
+                                {% for error in form.attachments.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <div id="fileList" class="file-list mt-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline-secondary btn-lg" onclick="history.back()">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </button>
+                        {{ form.submit(class="btn btn-primary btn-lg custom-button") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-card {
+    padding: 2.5rem;
+    border-radius: var(--border-radius-xl);
+    background: rgba(var(--bg-primary-rgb), 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(var(--primary-rgb), 0.1);
+    box-shadow: 
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.form-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.form-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(var(--primary-rgb), 0.1);
+}
+
+.form-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+}
+
+.custom-input {
+    border: 1px solid rgba(var(--primary-rgb), 0.2);
+    border-radius: var(--border-radius);
+    padding: 1rem 0.75rem;
+    font-size: 1rem;
+    background: rgba(var(--bg-primary-rgb), 0.5);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.custom-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
+}
+
+.custom-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-floating > label {
+    padding: 1rem 0.75rem;
+}
+
+.form-floating > .custom-input:focus ~ label,
+.form-floating > .custom-input:not(:placeholder-shown) ~ label {
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+    color: var(--primary-color);
+}
+
+.custom-file-upload {
+    position: relative;
+}
+
+.file-upload-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(var(--primary-rgb), 0.1);
+    border: 2px dashed rgba(var(--primary-rgb), 0.2);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-upload-label:hover {
+    background: rgba(var(--primary-rgb), 0.15);
+    border-color: rgba(var(--primary-rgb), 0.3);
+}
+
+.file-upload-label i {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+}
+
+.file-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.file-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: rgba(var(--primary-rgb), 0.1);
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+}
+
+.file-item i {
+    margin-right: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.custom-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.custom-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+}
+
+.invalid-feedback {
+    font-size: 0.875rem;
+    color: var(--danger-color);
+    margin-top: 0.25rem;
+}
+
+/* Ajustes para modo oscuro */
+[data-theme="dark"] .form-card {
+    background: rgba(30, 41, 59, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .form-section {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .custom-input {
+    background: rgba(30, 41, 59, 0.5);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .custom-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.2);
+}
+
+[data-theme="dark"] .form-floating > label {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .file-upload-label {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .file-upload-label:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .file-item {
+    background: rgba(255, 255, 255, 0.05);
+}
+</style>
+
+<script>
+document.getElementById('{{ form.attachments.id }}').addEventListener('change', function(e) {
+    const fileList = document.getElementById('fileList');
+    fileList.innerHTML = '';
+    
+    for (let file of this.files) {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.innerHTML = `
+            <i class="fas fa-file"></i>
+            <span>${file.name}</span>
+        `;
+        fileList.appendChild(fileItem);
+    }
+});
+</script>
+{% endblock %} 

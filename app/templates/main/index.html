@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row align-items-center py-5">
+        <div class="col-lg-6 fade-up">
+            <h1 class="display-4 fw-bold mb-4 gradient-text">
+                Gestiona tus proyectos de manera eficiente
+            </h1>
+            <p class="lead text-muted mb-5">
+                Una plataforma moderna y fácil de usar para administrar proyectos, 
+                realizar seguimiento y generar reportes detallados.
+            </p>
+            <div class="d-flex gap-3">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg btn-action shine-effect">
+                    <i class="fas fa-rocket me-2"></i>Comenzar Ahora
+                </a>
+                <a href="#features" class="btn btn-outline-primary btn-lg btn-action">
+                    <i class="fas fa-info-circle me-2"></i>Conoce Más
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6 mt-5 mt-lg-0 fade-up" style="--delay: 0.2s">
+            <div class="position-relative dashboard-preview">
+                <img src="{{ url_for('static', filename='img/dashboard-light.png') }}" 
+                     alt="Dashboard Preview" 
+                     class="img-fluid rounded-lg shadow-lg rotate-3d preview-light">
+                <img src="{{ url_for('static', filename='img/dashboard-dark.png') }}" 
+                     alt="Dashboard Preview" 
+                     class="img-fluid rounded-lg shadow-lg rotate-3d preview-dark">
+                <div class="position-absolute top-0 start-0 w-100 h-100 gradient-overlay rounded-lg"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div id="features" class="py-5">
+        <div class="text-center mb-5 fade-up">
+            <h2 class="display-5 fw-bold mb-3">Características Principales</h2>
+            <p class="lead text-muted">Todo lo que necesitas para gestionar tus proyectos en un solo lugar</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4 fade-up" style="--delay: 0.1s">
+                <div class="card neumorphic h-100">
+                    <div class="card-body p-4 text-center">
+                        <div class="feature-icon mb-4 shine-effect">
+                            <i class="fas fa-tasks fa-2x text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Gestión de Proyectos</h4>
+                        <p class="text-muted mb-0">
+                            Organiza y administra tus proyectos con herramientas intuitivas y eficientes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 fade-up" style="--delay: 0.2s">
+                <div class="card neumorphic h-100">
+                    <div class="card-body p-4 text-center">
+                        <div class="feature-icon mb-4 shine-effect">
+                            <i class="fas fa-chart-line fa-2x text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Reportes Detallados</h4>
+                        <p class="text-muted mb-0">
+                            Genera reportes completos y visualiza el progreso de tus proyectos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 fade-up" style="--delay: 0.3s">
+                <div class="card neumorphic h-100">
+                    <div class="card-body p-4 text-center">
+                        <div class="feature-icon mb-4 shine-effect">
+                            <i class="fas fa-users fa-2x text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Colaboración en Equipo</h4>
+                        <p class="text-muted mb-0">
+                            Trabaja en equipo de manera efectiva con herramientas colaborativas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="py-5">
+        <div class="row g-4">
+            <div class="col-md-3 fade-up" style="--delay: 0.1s">
+                <div class="card neumorphic text-center">
+                    <div class="card-body p-4">
+                        <h2 class="display-4 fw-bold mb-2 counter">1000+</h2>
+                        <p class="text-muted mb-0">Usuarios Activos</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 fade-up" style="--delay: 0.2s">
+                <div class="card neumorphic text-center">
+                    <div class="card-body p-4">
+                        <h2 class="display-4 fw-bold mb-2 counter">5000+</h2>
+                        <p class="text-muted mb-0">Proyectos Creados</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 fade-up" style="--delay: 0.3s">
+                <div class="card neumorphic text-center">
+                    <div class="card-body p-4">
+                        <h2 class="display-4 fw-bold mb-2 counter">98%</h2>
+                        <p class="text-muted mb-0">Satisfacción</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 fade-up" style="--delay: 0.4s">
+                <div class="card neumorphic text-center">
+                    <div class="card-body p-4">
+                        <h2 class="display-4 fw-bold mb-2 counter">24/7</h2>
+                        <p class="text-muted mb-0">Soporte Técnico</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="py-5">
+        <div class="card gradient-border animate-fade-in">
+            <div class="card-body p-5 text-center">
+                <h2 class="display-5 fw-bold mb-4 text-white">¿Listo para comenzar?</h2>
+                <p class="lead text-white-50 mb-4">
+                    Únete a miles de usuarios que ya están mejorando la gestión de sus proyectos
+                </p>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg btn-action shine-effect">
+                    <i class="fas fa-user-plus me-2"></i>Crear Cuenta Gratis
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.gradient-text {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.gradient-overlay {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+    pointer-events: none;
+}
+
+.dashboard-preview {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.preview-light,
+.preview-dark {
+    transition: opacity 0.3s ease;
+}
+
+/* Modo claro por defecto */
+.preview-dark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+
+/* Modo oscuro */
+[data-theme="dark"] .preview-light {
+    opacity: 0;
+}
+
+[data-theme="dark"] .preview-dark {
+    opacity: 1;
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.counter {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+[data-theme="dark"] .gradient-text,
+[data-theme="dark"] .counter {
+    background: linear-gradient(45deg, var(--primary-light), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+[data-theme="dark"] .gradient-overlay {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%);
+}
+</style>
+
+{% endblock %} 

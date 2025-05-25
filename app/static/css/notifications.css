@@ -1,0 +1,159 @@
+#notification-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    padding: 0.25em 0.6em;
+    font-size: 0.75rem;
+    line-height: 1;
+}
+
+#notification-toggle {
+    position: relative;
+}
+
+#notification-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 1000;
+}
+
+#notification-panel.show {
+    display: block;
+}
+
+.notification-header {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+
+.notification-item.unread {
+    background-color: #f0f7ff;
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    margin: 0 0 5px;
+    font-weight: 600;
+}
+
+.notification-message {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.notification-time {
+    color: var(--gray-600);
+    font-size: 0.8em;
+}
+
+.notification-action {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.notification-item:hover .notification-action {
+    opacity: 1;
+}
+
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+}
+
+.notification-toast {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+    min-width: 300px;
+    max-width: 400px;
+}
+
+.toast-header {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+
+.toast-body {
+    padding: 12px 15px;
+    color: var(--gray-700);
+}
+
+/* Estilos para la barra de desplazamiento */
+#notification-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+#notification-panel::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#notification-panel::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+#notification-panel::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Animaciones personalizadas */
+@keyframes notification-pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.notification-badge-pulse {
+    animation: notification-pulse 0.5s ease;
+} 

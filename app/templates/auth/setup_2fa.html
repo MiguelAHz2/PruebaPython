@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Configurar Autenticación de Dos Factores{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card neumorphic animate-fade-in">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="brand-icon mb-3 shine-effect">
+                            <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                        </div>
+                        <h2 class="fw-bold mb-1 fade-up gradient-text" data-text="Configurar 2FA">Configurar 2FA</h2>
+                        <p class="text-muted fade-up" style="--delay: 0.1s">Sigue los pasos para activar la autenticación de dos factores</p>
+                    </div>
+
+                    <div class="steps-container fade-up" style="--delay: 0.2s">
+                        <!-- Paso 1: Escanear código QR -->
+                        <div class="step mb-4">
+                            <h5 class="mb-3"><span class="badge bg-primary me-2">1</span>Escanea el código QR</h5>
+                            <p class="text-muted mb-3">Usa una aplicación de autenticación como Google Authenticator o Authy para escanear este código QR:</p>
+                            <div class="qr-container text-center p-4 bg-light rounded-3 mb-3">
+                                <img src="{{ qr_code }}" alt="Código QR para 2FA" class="img-fluid">
+                            </div>
+                            <div class="backup-key text-center">
+                                <p class="text-muted mb-2">¿No puedes escanear? Usa esta clave:</p>
+                                <code class="bg-light p-2 rounded">{{ secret_key }}</code>
+                            </div>
+                        </div>
+
+                        <!-- Paso 2: Verificar código -->
+                        <div class="step">
+                            <h5 class="mb-3"><span class="badge bg-primary me-2">2</span>Verifica el código</h5>
+                            <p class="text-muted mb-3">Ingresa el código de 6 dígitos que aparece en tu aplicación:</p>
+                            <form method="POST" class="needs-validation" novalidate>
+                                {{ form.hidden_tag() }}
+                                <div class="mb-4">
+                                    {{ form.code(class="form-control form-control-lg custom-input text-center", 
+                                               placeholder="000000", maxlength="6", pattern="[0-9]{6}",
+                                               autocomplete="off") }}
+                                    {% if form.code.errors %}
+                                        {% for error in form.code.errors %}
+                                            <div class="invalid-feedback d-block">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="d-grid">
+                                    {{ form.submit(class="btn btn-primary btn-lg btn-action shine-effect") }}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Códigos de respaldo -->
+                    {% if backup_codes %}
+                    <div class="backup-codes-container mt-5 fade-up" style="--delay: 0.3s">
+                        <h5 class="mb-3">Códigos de respaldo</h5>
+                        <p class="text-muted mb-3">Guarda estos códigos en un lugar seguro. Los necesitarás si pierdes acceso a tu aplicación de autenticación:</p>
+                        <div class="backup-codes bg-light p-3 rounded">
+                            {% for code in backup_codes %}
+                            <code class="d-inline-block me-2 mb-2">{{ code }}</code>
+                            {% endfor %}
+                        </div>
+                        <div class="alert alert-warning mt-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Estos códigos solo se mostrarán una vez. Asegúrate de guardarlos.
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.qr-container {
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+.backup-codes code {
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    background: rgba(var(--primary-rgb), 0.1);
+    border-radius: 4px;
+}
+
+.step {
+    position: relative;
+    padding-bottom: 2rem;
+}
+
+.step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    bottom: 0;
+    top: 2.5rem;
+    width: 2px;
+    background: var(--primary-color);
+    opacity: 0.2;
+}
+
+[data-theme="dark"] .bg-light {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .backup-codes code {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+</style>
+{% endblock %} 
