@@ -2,6 +2,7 @@ from datetime import datetime
 from app import db
 from app.models.user import User
 from app.models.tag import Tag
+from app.models.comment import Comment
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +25,9 @@ class Post(db.Model):
     # Likes (relación muchos a muchos con usuarios)
     likes = db.relationship('User', secondary='post_likes',
                           backref=db.backref('liked_posts', lazy=True))
+    
+    # Comentarios
+    comments = db.relationship('app.models.comment.Comment', backref='post', lazy=True)
     
     def __repr__(self):
         return f'<Post {self.title}>'
