@@ -1,6 +1,7 @@
 from datetime import datetime
 from app import db
 from app.models.user import User
+from app.models.tag import Tag
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,7 +18,7 @@ class Post(db.Model):
     author = db.relationship('User', backref=db.backref('posts', lazy=True))
     
     # Tags (relación muchos a muchos)
-    tags = db.relationship('Tag', secondary='post_tags',
+    tags = db.relationship('app.models.tag.Tag', secondary='post_tags',
                          backref=db.backref('posts', lazy=True))
     
     # Likes (relación muchos a muchos con usuarios)
@@ -49,34 +50,22 @@ class Post(db.Model):
 # Tabla intermedia para la relación muchos a muchos entre posts y tags
 post_tags = db.Table('post_tags',
     db.Column('post_id', db.Integer, db.ForeignKey('post.id'), primary_key=True),
-    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True)
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True),
+    extend_existing=True
 )
 
 # Tabla intermedia para los likes de los posts
 post_likes = db.Table('post_likes',
     db.Column('post_id', db.Integer, db.ForeignKey('post.id'), primary_key=True),
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('created_at', db.DateTime, default=datetime.utcnow)
+    db.Column('created_at', db.DateTime, default=datetime.utcnow),
+    extend_existing=True
 )
 
-class Tag(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True, nullable=False)
-    slug = db.Column(db.String(50), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    def __repr__(self):
-        return f'<Tag {self.name}>'
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'slug': self.slug,
-            'posts_count': len(self.posts)
-        }
-
 class Comment(db.Model):
+    __tablename__ = 'comment'
+    __table_args__ = {'extend_existing': True}
+    
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
