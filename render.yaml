@@ -3,7 +3,7 @@ services:
     name: gestion-proyectos
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wsgi:app
+    startCommand: gunicorn wsgi:app --workers 4 --bind 0.0.0.0:$PORT --log-file -
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.7
@@ -11,10 +11,16 @@ services:
         value: wsgi.py
       - key: FLASK_ENV
         value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WTF_CSRF_SECRET_KEY
+        generateValue: true
       - key: DATABASE_URL
         fromDatabase:
           name: gestion_proyectos_db
           property: connectionString
+      - key: PORT
+        value: 10000
 
 databases:
   - name: gestion_proyectos_db
