@@ -10,59 +10,49 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'una-clave-secreta-muy-dificil-de-adivinar'
     
     # Configuración de la base de datos
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'postgresql://postgres:tu-contraseña@localhost:5432/gestion_proyectos'
-    if SQLALCHEMY_DATABASE_URI.startswith("postgres://"):
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith("postgres://"):
         SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace("postgres://", "postgresql://", 1)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Configuración de CSRF
     WTF_CSRF_ENABLED = True
     WTF_CSRF_TIME_LIMIT = 3600
-    WTF_CSRF_SSL_STRICT = True  # True en producción
-    WTF_CSRF_SECRET_KEY = os.environ.get('WTF_CSRF_SECRET_KEY')
+    WTF_CSRF_SSL_STRICT = True
+    WTF_CSRF_SECRET_KEY = os.environ.get('WTF_CSRF_SECRET_KEY') or SECRET_KEY
     
     # Configuración de sesión
     PERMANENT_SESSION_LIFETIME = timedelta(days=31)
-    SESSION_COOKIE_SECURE = True  # True en producción
+    SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
     
     # Configuración de caché
-    CACHE_TYPE = 'redis'
-    CACHE_REDIS_URL = os.environ.get('REDIS_URL')
+    CACHE_TYPE = os.environ.get('CACHE_TYPE', 'simple')
     CACHE_DEFAULT_TIMEOUT = 300
     
     # Configuración de correo
-    MAIL_SERVER = os.environ.get('MAIL_SERVER')
-    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 587)
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
+    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     
     # Configuración de carga de archivos
-    UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'app', 'static', 'uploads')
+    UPLOAD_FOLDER = os.path.join(basedir, 'app', 'static', 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max-limit
     
     # Lista de extensiones permitidas
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx'}
     
     # Configuración de seguridad
-    SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT')
+    SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT') or 'my-security-salt'
     SECURITY_PASSWORD_HASH = 'pbkdf2_sha512'
     SECURITY_PASSWORD_LENGTH_MIN = 8
     
-    # Configuración de reCAPTCHA
-    RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
-    RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
-    RECAPTCHA_DATA_ATTRS = {'theme': 'light'}
-    
-    # Configuración de Socket.IO
-    SOCKETIO_MESSAGE_QUEUE = os.environ.get('REDIS_URL')
-    
     # Configuración de API
-    API_TITLE = 'Mi Aplicación API'
+    API_TITLE = 'Gestión de Proyectos API'
     API_VERSION = 'v1'
     OPENAPI_VERSION = '3.0.2'
     OPENAPI_URL_PREFIX = '/api'
@@ -70,7 +60,7 @@ class Config:
     OPENAPI_SWAGGER_UI_URL = 'https://cdn.jsdelivr.net/npm/swagger-ui-dist/'
     
     # Configuración de logging
-    LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
+    LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT', 'true').lower() in ['true', 'on', '1']
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
     
     # Configuración de paginación
@@ -118,19 +108,19 @@ class Config:
         
         # Configurar logging
         if not app.debug and not app.testing:
+            import logging
+            from logging.handlers import RotatingFileHandler
+            
             if Config.LOG_TO_STDOUT:
-                import logging
-                from logging import StreamHandler
-                stream_handler = StreamHandler()
+                stream_handler = logging.StreamHandler()
                 stream_handler.setLevel(logging.INFO)
                 app.logger.addHandler(stream_handler)
             else:
                 if not os.path.exists('logs'):
                     os.mkdir('logs')
-                from logging.handlers import RotatingFileHandler
                 file_handler = RotatingFileHandler('logs/app.log',
-                                                 maxBytes=10240,
-                                                 backupCount=10)
+                                                maxBytes=10240,
+                                                backupCount=10)
                 file_handler.setFormatter(logging.Formatter(
                     '%(asctime)s %(levelname)s: %(message)s '
                     '[in %(pathname)s:%(lineno)d]'
