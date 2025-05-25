@@ -26,6 +26,9 @@ class Post(db.Model):
     likes = db.relationship('User', secondary='post_likes',
                           backref=db.backref('liked_posts', lazy=True))
     
+    # Comentarios
+    comments = db.relationship('app.models.comment.Comment', backref='post', lazy='dynamic')
+    
     def __repr__(self):
         return f'<Post {self.title}>'
     
@@ -46,7 +49,7 @@ class Post(db.Model):
             },
             'tags': [tag.name for tag in self.tags],
             'likes_count': len(self.likes),
-            'comments': [comment.to_dict() for comment in self.post_comments]
+            'comments': [comment.to_dict() for comment in self.comments]
         }
 
 # Tabla intermedia para la relación muchos a muchos entre posts y tags

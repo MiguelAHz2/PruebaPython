@@ -22,7 +22,6 @@ class Comment(db.Model):
     task = db.relationship('Task', backref=db.backref('task_comments', lazy='dynamic'))
     project = db.relationship('Project', backref=db.backref('project_comments', lazy='dynamic'))
     report = db.relationship('Report', backref=db.backref('report_comments', lazy='dynamic'))
-    post = db.relationship('Post', backref=db.backref('post_comments', lazy='dynamic'))
 
     def __init__(self, content, user_id, task_id=None, project_id=None, report_id=None, post_id=None):
         self.content = content
