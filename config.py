@@ -10,12 +10,13 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'una-clave-secreta-muy-dificil-de-adivinar'
     
     # Configuración de la base de datos
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        os.environ.get('SQLALCHEMY_DATABASE_URI') or \
-        'sqlite:///' + os.path.join(basedir, 'app.db')
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
     
-    if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith("postgres://"):
-        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace("postgres://", "postgresql://", 1)
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    if not SQLALCHEMY_DATABASE_URI:
+        raise ValueError("No se ha configurado DATABASE_URL en las variables de entorno")
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
